@@ -11,31 +11,7 @@
 #include <assert.h>
 
 #include "onvif_dump.h"
-#include "onviffunc.h"
-
-/*
-int main(int argc, char **argv)
-{
-    ONVIF_DetectDevice(NULL);
-
-    return 0;
-}
-*/
-
-
-/* socket超时时间（单秒秒） */
-#define SOAP_SOCK_TIMEOUT    (10)
-
-#define SOAP_CHECK_ERROR(result, soap, str) \
-    do { \
-        if (SOAP_OK != (result) || SOAP_OK != (soap)->error) { \
-            soap_perror((soap), (str)); \
-            if (SOAP_OK == (result)) { \
-                (result) = (soap)->error; \
-            } \
-            goto EXIT; \
-        } \
-} while (0)
+#include "onvif_comm.h"
 
 /************************************************************************
 **函数：ONVIF_GetDeviceInformation
@@ -48,20 +24,22 @@ int main(int argc, char **argv)
 ************************************************************************/
 int ONVIF_GetDeviceInformation(const char *DeviceXAddr)
 {
-	int result = 0;
-	struct soap *soap = NULL;
-	struct _tds__GetDeviceInformation           devinfo_req;
-	struct _tds__GetDeviceInformationResponse   devinfo_resp;
+    int result = 0;
+    struct soap *soap = NULL;
+    struct _tds__GetDeviceInformation           devinfo_req;
+    struct _tds__GetDeviceInformationResponse   devinfo_resp;
 
-	SOAP_ASSERT(NULL != DeviceXAddr);
-	SOAP_ASSERT(NULL != (soap = ONVIF_soap_new(SOAP_SOCK_TIMEOUT)));
+    SOAP_ASSERT(NULL != DeviceXAddr);
+    SOAP_ASSERT(NULL != (soap = ONVIF_soap_new(SOAP_SOCK_TIMEOUT)));
 
-	memset(&devinfo_req, 0x00, sizeof(devinfo_req));
-	memset(&devinfo_resp, 0x00, sizeof(devinfo_resp));
-	result = soap_call___tds__GetDeviceInformation(soap, DeviceXAddr, NULL, &devinfo_req, &devinfo_resp);
-	SOAP_CHECK_ERROR(result, soap, "GetDeviceInformation");
+    ONVIF_SetAuthInfo(soap, USERNAME, PASSWORD);
 
-	dump_tds__GetDeviceInformationResponse(&devinfo_resp);
+    memset(&devinfo_req, 0x00, sizeof(devinfo_req));
+    memset(&devinfo_resp, 0x00, sizeof(devinfo_resp));
+    result = soap_call___tds__GetDeviceInformation(soap, DeviceXAddr, NULL, &devinfo_req, &devinfo_resp);
+    SOAP_CHECK_ERROR(result, soap, "GetDeviceInformation");
+
+    dump_tds__GetDeviceInformationResponse(&devinfo_resp);
 
 EXIT:
 
@@ -78,6 +56,9 @@ void cb_discovery(char *DeviceXAddr)
 
 int main(int argc, char **argv)
 {
-    ONVIF_DetectDevice(cb_discovery);
+	//ONVIF_DetectDevice(NULL);
+
+	ONVIF_DetectDevice(cb_discovery);
+
     return 0;
 }
