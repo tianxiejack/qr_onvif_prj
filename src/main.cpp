@@ -49,9 +49,47 @@ EXIT:
     return result;
 }
 
+
+/************************************************************************
+**函数：ONVIF_GetCapabilities
+**功能：获取设备能力信息
+**参数：
+        [in] DeviceXAddr - 设备服务地址
+**返回：
+        0表明成功，非0表明失败
+**备注：
+    1). 其中最主要的参数之一是媒体服务地址
+************************************************************************/
+int ONVIF_GetCapabilities(const char *DeviceXAddr)
+{
+    int result = 0;
+    struct soap *soap = NULL;
+    struct _tds__GetCapabilities            req;
+    struct _tds__GetCapabilitiesResponse    rep;
+
+    SOAP_ASSERT(NULL != DeviceXAddr);
+    SOAP_ASSERT(NULL != (soap = ONVIF_soap_new(SOAP_SOCK_TIMEOUT)));
+
+    ONVIF_SetAuthInfo(soap, USERNAME, PASSWORD);
+
+    memset(&req, 0x00, sizeof(req));
+    memset(&rep, 0x00, sizeof(rep));
+    result = soap_call___tds__GetCapabilities(soap, DeviceXAddr, NULL, &req, &rep);
+    SOAP_CHECK_ERROR(result, soap, "GetCapabilities");
+
+    dump_tds__GetCapabilitiesResponse(&rep);
+
+EXIT:
+
+    if (NULL != soap) {
+        ONVIF_soap_delete(soap);
+    }
+    return result;
+}
+
 void cb_discovery(char *DeviceXAddr)
 {
-    ONVIF_GetDeviceInformation(DeviceXAddr);
+	ONVIF_GetCapabilities(DeviceXAddr);
 }
 
 int main(int argc, char **argv)
