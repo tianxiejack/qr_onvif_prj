@@ -32,21 +32,28 @@
 									<listOptionValue builtIn="false" value="../src/comm"/>
 									<listOptionValue builtIn="false" value="../src/onvif"/>
 								</option>
+								<option id="nvcc.compiler.def.symbols.593915776" name="Defined symbols (-D)" superClass="nvcc.compiler.def.symbols" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="WITH_OPENSSL"/>
+								</option>
 								<inputType id="nvcc.compiler.input.cu.326221345" superClass="nvcc.compiler.input.cu"/>
 								<inputType id="nvcc.compiler.input.cpp.1937898572" superClass="nvcc.compiler.input.cpp"/>
 								<inputType id="nvcc.compiler.input.c.592969463" superClass="nvcc.compiler.input.c"/>
 							</tool>
 							<tool id="nvcc.linker.base.419158985" name="NVCC Linker" superClass="nvcc.linker.base">
-								<option id="nvcc.linker.option.paths.1424141220" name="Library search path (-L)" superClass="nvcc.linker.option.paths"/>
-								<option id="nvcc.linker.option.cudart.778100973" name="CUDA Runtime Library:" superClass="nvcc.linker.option.cudart" value="nvcc.linker.option.cudart.static" valueType="enumerated"/>
-								<option id="nvcc.linker.option.libs.723357766" name="Libraries (-l)" superClass="nvcc.linker.option.libs"/>
-								<option id="nvcc.linker.option.linkgl.1756124255" name="Link with OpenGL libraries" superClass="nvcc.linker.option.linkgl" value="false" valueType="boolean"/>
-								<option id="nvcc.linker.option.userobjs.1805239641" name="Other objects" superClass="nvcc.linker.option.userobjs" valueType="userObjs">
-									<listOptionValue builtIn="false" value="/home/jet/cuda-workspace/onvifprj/lib/libgsoap.a"/>
-									<listOptionValue builtIn="false" value="/home/jet/cuda-workspace/onvifprj/lib/libgsoapck.a"/>
-									<listOptionValue builtIn="false" value="/home/jet/cuda-workspace/onvifprj/lib/libgsoapssl.a"/>
+								<option id="nvcc.linker.option.paths.1424141220" name="Library search path (-L)" superClass="nvcc.linker.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="/usr/local/lib"/>
 								</option>
+								<option id="nvcc.linker.option.cudart.778100973" name="CUDA Runtime Library:" superClass="nvcc.linker.option.cudart" value="nvcc.linker.option.cudart.static" valueType="enumerated"/>
+								<option id="nvcc.linker.option.libs.723357766" name="Libraries (-l)" superClass="nvcc.linker.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" value="ssl"/>
+									<listOptionValue builtIn="false" value="crypto"/>
+									<listOptionValue builtIn="false" value="z"/>
+									<listOptionValue builtIn="false" value="pthread"/>
+								</option>
+								<option id="nvcc.linker.option.linkgl.1756124255" name="Link with OpenGL libraries" superClass="nvcc.linker.option.linkgl" value="false" valueType="boolean"/>
+								<option id="nvcc.linker.option.userobjs.1805239641" name="Other objects" superClass="nvcc.linker.option.userobjs" valueType="userObjs"/>
 								<option id="nvcc.linker.option.shared.614453127" name="Shared (-shared)" superClass="nvcc.linker.option.shared" value="false" valueType="boolean"/>
+								<option id="nvcc.linker.option.other.1141627420" name="Other options (-Xlinker [option])" superClass="nvcc.linker.option.other" valueType="stringList"/>
 								<inputType id="nvcc.linker.input.1293653446" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

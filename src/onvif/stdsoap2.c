@@ -50,7 +50,7 @@ compiling, linking, and/or using OpenSSL is allowed.
 A commercial use license is available from Genivia, Inc., contact@genivia.com
 --------------------------------------------------------------------------------
 */
-
+#include "wsdd.nsmap"
 #define GSOAP_LIB_VERSION 20845
 
 #ifdef AS400
@@ -62,7 +62,6 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #endif
 
 #include "stdsoap2.h"
-#include "namespace.h"
 
 #if GSOAP_VERSION != GSOAP_LIB_VERSION
 # error "GSOAP VERSION MISMATCH IN LIBRARY: PLEASE REINSTALL PACKAGE"
