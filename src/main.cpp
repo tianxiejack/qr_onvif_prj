@@ -13,6 +13,15 @@
 #include "onvif_dump.h"
 #include "onvif_comm.h"
 
+
+
+
+
+
+
+
+
+
 /************************************************************************
 **函数：ONVIF_GetDeviceInformation
 **功能：获取设备基本信息
@@ -75,9 +84,46 @@ int ONVIF_GetCapabilities(const char *DeviceXAddr)
     memset(&req, 0x00, sizeof(req));
     memset(&rep, 0x00, sizeof(rep));
     result = soap_call___tds__GetCapabilities(soap, DeviceXAddr, NULL, &req, &rep);
+	    dump_tds__GetCapabilitiesResponse(&rep);
     SOAP_CHECK_ERROR(result, soap, "GetCapabilities");
 
-    dump_tds__GetCapabilitiesResponse(&rep);
+EXIT:
+
+    if (NULL != soap) {
+        ONVIF_soap_delete(soap);
+    }
+    return result;
+}
+
+
+int ONVIF_GetPtzStatus(const char *DeviceXAddr)
+{
+	int result = 0;
+	struct soap *soap = NULL;
+
+
+	SOAP_ASSERT(NULL != DeviceXAddr);
+	SOAP_ASSERT(NULL != (soap = ONVIF_soap_new(SOAP_SOCK_TIMEOUT)));
+
+	ONVIF_SetAuthInfo(soap, USERNAME, PASSWORD);
+
+
+	struct _tptz__GetStatus req;
+	struct _tptz__GetStatusResponse rep;
+	
+	memset(&req, 0x00, sizeof(req));
+	memset(&rep, 0x00, sizeof(rep));
+	result = soap_call___tptz__GetStatus(soap,DeviceXAddr,NULL,&req,&rep);
+	    //GetStatus(soap, DeviceXAddr,NULL ,&req, &rep);
+    printf("111111\n");
+
+	dump_tds__GetPTZStatus(&rep);
+		printf("222222\n");
+
+	SOAP_CHECK_ERROR(result, soap, "GetPTZstatus");
+
+	
+
 
 EXIT:
 
@@ -89,7 +135,7 @@ EXIT:
 
 void cb_discovery(char *DeviceXAddr)
 {
-	ONVIF_GetCapabilities(DeviceXAddr);
+	ONVIF_GetPtzStatus(DeviceXAddr);
 }
 
 int main(int argc, char **argv)

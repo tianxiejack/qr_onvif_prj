@@ -396,6 +396,38 @@ void dump_tds__GetCapabilitiesResponse(struct _tds__GetCapabilitiesResponse *rep
     log_func_out;
 }
 
+
+void dump_tds__GetPTZStatus(struct _tptz__GetStatusResponse *rep)
+{
+    assert(NULL != rep);
+    log_func_in;
+    log_level_val(0, "PTZStatue: ",      log_pos, rep->PTZStatus);
+    if (NULL != rep->PTZStatus) {
+
+        log_level_val(1, "Position: ",     log_pos, rep->PTZStatus->Position);
+        if (NULL != rep->PTZStatus->Position) {
+		log_level_val(2, "x: ",     log_float, &rep->PTZStatus->Position->PanTilt->x);
+		log_level_val(2, "y: ",     log_float, &rep->PTZStatus->Position->PanTilt->y);
+		log_level_val(2, "zoom: ",     log_float, &rep->PTZStatus->Position->Zoom->x);
+        }
+
+        log_level_val(1, "MoveStatus: ",     log_pos, rep->PTZStatus->MoveStatus);
+        if (NULL != rep->PTZStatus->MoveStatus) {
+		//log_level_val(2, "PanTilt: ",     log_int, *rep->PTZStatus->MoveStatus->PanTilt);
+		//log_level_val(2, "zoom: ",     log_int, *rep->PTZStatus->MoveStatus->Zoom);
+        }
+
+        log_level_val(1, "Error: ",        log_pos, rep->PTZStatus->Error);
+        if (NULL != rep->PTZStatus->Error) {
+            //log_level_val(2, "Error: ",     log_int, *rep->PTZStatus->Error);
+        }
+
+    }
+    log_func_out;
+}
+
+
+
 void dump_tds__GetDeviceInformationResponse(struct _tds__GetDeviceInformationResponse *rep)
 {
     assert(NULL != rep);

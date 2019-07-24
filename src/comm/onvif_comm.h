@@ -38,7 +38,7 @@ extern "C" {
 #define SOAP_ITEM       ""                                                      // Ѱ�ҵ��豸��Χ
 #define SOAP_TYPES      "dn:NetworkVideoTransmitter"                            // Ѱ�ҵ��豸����
 
-#define SOAP_SOCK_TIMEOUT    (10)                                               // socket��ʱʱ�䣨�����룩
+#define SOAP_SOCK_TIMEOUT    (1)                                               // socket��ʱʱ�䣨�����룩
 
 #define ONVIF_ADDRESS_SIZE   (128)                                              // URI��ַ����
 #define ONVIF_TOKEN_SIZE     (65)                                               // token����

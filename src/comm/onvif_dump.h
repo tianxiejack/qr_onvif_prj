@@ -34,6 +34,8 @@ void dump_trt__GetVideoEncoderConfigurationsResponse(struct _trt__GetVideoEncode
 void dump_trt__GetCompatibleVideoEncoderConfigurationsResponse(struct _trt__GetCompatibleVideoEncoderConfigurationsResponse *rep);
 void dump_trt__GetVideoEncoderConfigurationOptionsResponse(struct _trt__GetVideoEncoderConfigurationOptionsResponse *rep);
 
+void dump_tds__GetPTZStatus(struct _tptz__GetStatusResponse *rep);
+
 #else
 
 #define dump__wsdd__ProbeMatches
@@ -54,6 +56,8 @@ void dump_trt__GetVideoEncoderConfigurationOptionsResponse(struct _trt__GetVideo
 #define dump_trt__GetVideoEncoderConfigurationsResponse
 #define dump_trt__GetCompatibleVideoEncoderConfigurationsResponse
 #define dump_trt__GetVideoEncoderConfigurationOptionsResponse
+
+#define dump_tds__GetPTZStatus
 
 #endif
 
