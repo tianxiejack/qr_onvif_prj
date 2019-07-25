@@ -114,17 +114,10 @@ int ONVIF_GetPtzStatus(const char *DeviceXAddr)
 	memset(&req, 0x00, sizeof(req));
 	memset(&rep, 0x00, sizeof(rep));
 	result = soap_call___tptz__GetStatus(soap,DeviceXAddr,NULL,&req,&rep);
-	    //GetStatus(soap, DeviceXAddr,NULL ,&req, &rep);
-    printf("111111\n");
-
-	dump_tds__GetPTZStatus(&rep);
-		printf("222222\n");
 
 	SOAP_CHECK_ERROR(result, soap, "GetPTZstatus");
-
+	dump_tds__GetPTZStatus(&rep);
 	
-
-
 EXIT:
 
     if (NULL != soap) {
@@ -133,10 +126,71 @@ EXIT:
     return result;
 }
 
+
+int ONVIF_GetNodes(const char *DeviceXAddr)
+{
+	int result = 0;
+	struct soap *soap = NULL;
+
+	SOAP_ASSERT(NULL != DeviceXAddr);
+	SOAP_ASSERT(NULL != (soap = ONVIF_soap_new(SOAP_SOCK_TIMEOUT)));
+
+	ONVIF_SetAuthInfo(soap, USERNAME, PASSWORD);
+
+	struct _tptz__GetNodes req;
+	struct _tptz__GetNodesResponse rep;
+
+	soap_call___tptz__GetNodes(soap, DeviceXAddr, NULL, &req,&rep);
+	
+	SOAP_CHECK_ERROR(result, soap, "GetNodes");
+
+
+EXIT:
+
+    if (NULL != soap) {
+        ONVIF_soap_delete(soap);
+    }
+    return result;
+
+}
+
+
+int ONVIF_GetConfigurationOptions(const char *DeviceXAddr)
+{
+	int result = 0;
+	struct soap *soap = NULL;
+
+	SOAP_ASSERT(NULL != DeviceXAddr);
+	SOAP_ASSERT(NULL != (soap = ONVIF_soap_new(SOAP_SOCK_TIMEOUT)));
+
+	ONVIF_SetAuthInfo(soap, USERNAME, PASSWORD);
+
+	struct _tptz__GetConfigurationOptions req;
+	struct _tptz__GetConfigurationOptionsResponse rep;
+	
+	soap_call___tptz__GetConfigurationOptions(soap,DeviceXAddr,NULL,&req,&rep);
+
+	SOAP_CHECK_ERROR(result, soap, "GetConfigurationOptions");
+
+
+EXIT:
+
+    if (NULL != soap) {
+        ONVIF_soap_delete(soap);
+    }
+    return result;
+
+}
+
+
+
 void cb_discovery(char *DeviceXAddr)
 {
-	ONVIF_GetPtzStatus(DeviceXAddr);
+	ONVIF_GetNodes(DeviceXAddr);
 }
+
+
+
 
 int main(int argc, char **argv)
 {
