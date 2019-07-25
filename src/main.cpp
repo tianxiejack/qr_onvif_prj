@@ -520,7 +520,6 @@ if(flag == 0)
 	sprintf(PTZendpoint, "http://%s/onvif/PTZ", ip);
 	printf("PTZendpoint is %s \n", PTZendpoint);        
 
-
 ptz_req.ProfileToken = profile;
 ptz_req.Translation = soap_new_tt__PTZVector(soap, -1);
 ptz_req.Translation->PanTilt =  soap_new_tt__Vector2D(soap, -1);
@@ -592,7 +591,256 @@ EXIT:
 	
 }
 
+int ONVIF_checktest_continuesMove(const char *DeviceXAddr)
+{
+	struct soap *soap = NULL;
+	
+	//soap_init(soap);
+	SOAP_ASSERT(NULL != DeviceXAddr);
+	SOAP_ASSERT(NULL != (soap = ONVIF_soap_new(SOAP_SOCK_TIMEOUT)));
 
+	char * ip;
+	char Mediaddr[256]="";
+	static char profile[256]="";
+	float pan = 0.1;
+	float panSpeed = 1;
+	float tilt = 0.2;
+	float tiltSpeed = 0.5;
+	float zoom = 0;
+	float zoomSpeed = 0.5;
+	struct _tds__GetCapabilities            	req;
+	struct _tds__GetCapabilitiesResponse    	rep;
+	struct _trt__GetProfiles 			getProfiles;
+	struct _trt__GetProfilesResponse		response;	
+	struct _tptz__AbsoluteMove           absoluteMove;
+	struct _tptz__AbsoluteMoveResponse   absoluteMoveResponse;
+	struct _tptz__GetStatus statusReq;
+	struct _tptz__GetStatusResponse statusRep;
+
+struct _tptz__ContinuousMove ptz_req;
+struct _tptz__ContinuousMoveResponse ptz_resp;
+memset(&ptz_req, 0x0, sizeof(ptz_req));
+memset(&ptz_resp, 0x0, sizeof(ptz_resp));
+			
+	req.Category = (enum tt__CapabilityCategory *)soap_malloc(soap, sizeof(int));
+	req.__sizeCategory = 1;
+	*(req.Category) = (enum tt__CapabilityCategory)0;
+       
+    char endpoint[255];
+    memset(endpoint, '\0', 255);
+
+    ip = "192.168.0.64"; 
+    
+    sprintf(endpoint, "http://%s/onvif/device_service", ip);  
+static int flag = 0;
+#if 1
+if(flag == 0)
+{
+    soap_call___tds__GetCapabilities(soap, endpoint, NULL, &req, &rep);
+    if (soap->error)  
+    {  
+        printf("[%s][%d]--->>> soap result: %d, %s, %s\n", __func__, __LINE__, 
+	                                        soap->error, *soap_faultcode(soap), 
+	                                        *soap_faultstring(soap));  	 
+    } 
+    else
+	{
+        printf("get capability success\n");
+        //printf("Dev_XAddr====%s\n",rep.Capabilities->Device->XAddr);
+        printf("Med_XAddr====%s\n",rep.Capabilities->Media->XAddr);
+        //printf("PTZ_XAddr====%s\n",rep.Capabilities->PTZ->XAddr);
+        strcpy(Mediaddr,rep.Capabilities->Media->XAddr);
+    }	
+    printf("\n");
+	
+    soap_wsse_add_UsernameTokenDigest(soap, NULL, USERNAME, PASSWORD);
+    if(soap_call___trt__GetProfiles(soap,Mediaddr,NULL,&getProfiles,&response)==SOAP_OK)
+    {
+        strcpy(profile, response.Profiles[0].token);
+        printf("get profile succeed \n");		
+	    printf("profile====%s\n",profile);	
+    }
+    else
+    {
+		printf("get profile failed \n");
+		printf("[%s][%d]--->>> soap result: %d, %s, %s\n", __func__, __LINE__, 
+	                                        soap->error, *soap_faultcode(soap), 
+	                                        *soap_faultstring(soap));  
+    }
+    printf("\n");
+	flag = 1;
+}
+#endif
+
+
+
+
+
+	char PTZendpoint[255];
+	memset(PTZendpoint, '\0', 255);
+	sprintf(PTZendpoint, "http://%s/onvif/PTZ", ip);
+	printf("PTZendpoint is %s \n", PTZendpoint);        
+
+
+ptz_req.ProfileToken = profile;
+
+ptz_req.Velocity = soap_new_tt__PTZSpeed(soap,-1);
+ptz_req.Velocity->PanTilt = soap_new_tt__Vector2D(soap, -1);
+ptz_req.Velocity->Zoom = soap_new_tt__Vector1D(soap,-1);
+
+
+float move_step = 0.5;
+if(move_step >= 1)
+{
+	move_step = 0.99999;
+}
+
+	ptz_req.Velocity->PanTilt->x = move_step;
+	
+
+
+	soap_wsse_add_UsernameTokenDigest(soap, NULL, USERNAME, PASSWORD);
+	soap_call___tptz__ContinuousMove(soap, PTZendpoint, NULL, &ptz_req, &ptz_resp);
+
+	
+
+EXIT:
+		 
+
+    soap_destroy(soap); // clean up class instances
+    soap_end(soap); // clean up everything and close socket, // userid and passwd were deallocated
+    soap_done(soap); // close master socket and detach context
+    printf("\n");	
+		
+    return 0;
+	
+}
+
+
+int ONVIF_checktest_stopMove(const char *DeviceXAddr)
+{
+	struct soap *soap = NULL;
+	
+	//soap_init(soap);
+	SOAP_ASSERT(NULL != DeviceXAddr);
+	SOAP_ASSERT(NULL != (soap = ONVIF_soap_new(SOAP_SOCK_TIMEOUT)));
+
+	char * ip;
+	char Mediaddr[256]="";
+	static char profile[256]="";
+	float pan = 0.1;
+	float panSpeed = 1;
+	float tilt = 0.2;
+	float tiltSpeed = 0.5;
+	float zoom = 0;
+	float zoomSpeed = 0.5;
+	struct _tds__GetCapabilities            	req;
+	struct _tds__GetCapabilitiesResponse    	rep;
+	struct _trt__GetProfiles 			getProfiles;
+	struct _trt__GetProfilesResponse		response;	
+	struct _tptz__AbsoluteMove           absoluteMove;
+	struct _tptz__AbsoluteMoveResponse   absoluteMoveResponse;
+	struct _tptz__GetStatus statusReq;
+	struct _tptz__GetStatusResponse statusRep;
+
+struct _tptz__Stop ptz_req;
+struct _tptz__StopResponse ptz_resp;
+memset(&ptz_req, 0x0, sizeof(ptz_req));
+memset(&ptz_resp, 0x0, sizeof(ptz_resp));
+			
+	req.Category = (enum tt__CapabilityCategory *)soap_malloc(soap, sizeof(int));
+	req.__sizeCategory = 1;
+	*(req.Category) = (enum tt__CapabilityCategory)0;
+       
+    char endpoint[255];
+    memset(endpoint, '\0', 255);
+
+    ip = "192.168.0.64"; 
+    
+    sprintf(endpoint, "http://%s/onvif/device_service", ip);  
+static int flag = 0;
+#if 1
+if(flag == 0)
+{
+    soap_call___tds__GetCapabilities(soap, endpoint, NULL, &req, &rep);
+    if (soap->error)  
+    {  
+        printf("[%s][%d]--->>> soap result: %d, %s, %s\n", __func__, __LINE__, 
+	                                        soap->error, *soap_faultcode(soap), 
+	                                        *soap_faultstring(soap));  	 
+    } 
+    else
+	{
+        printf("get capability success\n");
+        //printf("Dev_XAddr====%s\n",rep.Capabilities->Device->XAddr);
+        printf("Med_XAddr====%s\n",rep.Capabilities->Media->XAddr);
+        //printf("PTZ_XAddr====%s\n",rep.Capabilities->PTZ->XAddr);
+        strcpy(Mediaddr,rep.Capabilities->Media->XAddr);
+    }	
+    printf("\n");
+	
+    soap_wsse_add_UsernameTokenDigest(soap, NULL, USERNAME, PASSWORD);
+    if(soap_call___trt__GetProfiles(soap,Mediaddr,NULL,&getProfiles,&response)==SOAP_OK)
+    {
+        strcpy(profile, response.Profiles[0].token);
+        printf("get profile succeed \n");		
+	    printf("profile====%s\n",profile);	
+    }
+    else
+    {
+		printf("get profile failed \n");
+		printf("[%s][%d]--->>> soap result: %d, %s, %s\n", __func__, __LINE__, 
+	                                        soap->error, *soap_faultcode(soap), 
+	                                        *soap_faultstring(soap));  
+    }
+    printf("\n");
+	flag = 1;
+}
+#endif
+
+
+
+
+
+	char PTZendpoint[255];
+	memset(PTZendpoint, '\0', 255);
+	sprintf(PTZendpoint, "http://%s/onvif/PTZ", ip);
+	printf("PTZendpoint is %s \n", PTZendpoint);        
+
+
+ptz_req.ProfileToken = profile;
+
+ptz_req.PanTilt = soap_new_xsd__boolean(soap,-1);
+ptz_req.Zoom = soap_new_xsd__boolean(soap,-1);
+
+
+float move_step = 0.5;
+if(move_step >= 1)
+{
+	move_step = 0.99999;
+}
+
+	ptz_req.PanTilt = 0;
+	ptz_req.Zoom = 0;
+	
+
+
+	soap_wsse_add_UsernameTokenDigest(soap, NULL, USERNAME, PASSWORD);
+	soap_call___tptz__Stop(soap, PTZendpoint, NULL, &ptz_req, &ptz_resp);
+
+	
+
+EXIT:
+		 
+
+    soap_destroy(soap); // clean up class instances
+    soap_end(soap); // clean up everything and close socket, // userid and passwd were deallocated
+    soap_done(soap); // close master socket and detach context
+    printf("\n");	
+		
+    return 0;
+	
+}
 
 
 void cb_discovery(char *DeviceXAddr)
@@ -600,7 +848,10 @@ void cb_discovery(char *DeviceXAddr)
 	ONVIF_GetDeviceInformation(DeviceXAddr);
 
 
-	ONVIF_checktest_relativeMove(DeviceXAddr);
+	ONVIF_checktest_continuesMove(DeviceXAddr);
+
+	sleep(5);
+	ONVIF_checktest_stopMove(DeviceXAddr);
 		
 #if 0
 	int64 t1,t2 ;
