@@ -13,14 +13,17 @@
 #include "onvif_dump.h"
 #include "onvif_comm.h"
 
+#include "wsseapi.h"
+#include "stdsoap2.h"
 
+#if 0
+#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
-
-
-
-
-
-
+using namespace std;
+using namespace cv;
+#endif
 
 /************************************************************************
 **函数：ONVIF_GetDeviceInformation
@@ -183,10 +186,124 @@ EXIT:
 }
 
 
+int ONVIF_checktest(const char *DeviceXAddr)
+{
+	struct soap *soap = NULL;
+	
+	//soap_init(soap);
+	SOAP_ASSERT(NULL != DeviceXAddr);
+	SOAP_ASSERT(NULL != (soap = ONVIF_soap_new(SOAP_SOCK_TIMEOUT)));
+
+	char * ip;
+	char Mediaddr[256]="";
+	char profile[256]="";
+	float pan = 1;
+	float panSpeed = 1;
+	float tilt = 1;
+	float tiltSpeed = 0.5;
+	float zoom = 0;
+	float zoomSpeed = 0.5;
+	struct _tds__GetCapabilities            	req;
+	struct _tds__GetCapabilitiesResponse    	rep;
+	struct _trt__GetProfiles 			getProfiles;
+	struct _trt__GetProfilesResponse		response;	
+	struct _tptz__AbsoluteMove           absoluteMove;
+	struct _tptz__AbsoluteMoveResponse   absoluteMoveResponse;
+	struct _tptz__GetStatus statusReq;
+	struct _tptz__GetStatusResponse statusRep;
+
+
+			
+	req.Category = (enum tt__CapabilityCategory *)soap_malloc(soap, sizeof(int));
+	req.__sizeCategory = 1;
+	*(req.Category) = (enum tt__CapabilityCategory)0;
+       
+    char endpoint[255];
+    memset(endpoint, '\0', 255);
+
+    ip = "192.168.0.64"; 
+    
+    sprintf(endpoint, "http://%s/onvif/device_service", ip);    
+
+    soap_call___tds__GetCapabilities(soap, endpoint, NULL, &req, &rep);
+    if (soap->error)  
+    {  
+        printf("[%s][%d]--->>> soap result: %d, %s, %s\n", __func__, __LINE__, 
+	                                        soap->error, *soap_faultcode(soap), 
+	                                        *soap_faultstring(soap));  	 
+    } 
+    else
+	{
+        printf("get capability success\n");
+        //printf("Dev_XAddr====%s\n",rep.Capabilities->Device->XAddr);
+        printf("Med_XAddr====%s\n",rep.Capabilities->Media->XAddr);
+        //printf("PTZ_XAddr====%s\n",rep.Capabilities->PTZ->XAddr);
+        strcpy(Mediaddr,rep.Capabilities->Media->XAddr);
+    }	
+    printf("\n");
+	
+    soap_wsse_add_UsernameTokenDigest(soap, NULL, USERNAME, PASSWORD);
+	
+
+    if(soap_call___trt__GetProfiles(soap,Mediaddr,NULL,&getProfiles,&response)==SOAP_OK)
+    {
+        strcpy(profile, response.Profiles[0].token);
+        printf("get profile succeed \n");		
+	    printf("profile====%s\n",profile);	
+    }
+    else
+    {
+        printf("get profile failed \n");
+	    printf("[%s][%d]--->>> soap result: %d, %s, %s\n", __func__, __LINE__, 
+	                                        soap->error, *soap_faultcode(soap), 
+	                                        *soap_faultstring(soap));  
+    }
+    printf("\n");	
+
+
+	char PTZendpoint[255];
+	memset(PTZendpoint, '\0', 255);
+	sprintf(PTZendpoint, "http://%s/onvif/PTZ", ip);
+	printf("PTZendpoint is %s \n", PTZendpoint);  
+	statusReq.ProfileToken = profile;
+	soap_wsse_add_UsernameTokenDigest(soap, NULL, USERNAME, PASSWORD);
+
+	int result;
+	result = soap_call___tptz__GetStatus(soap, PTZendpoint, NULL, &statusReq, 
+	                                        &statusRep);			
+
+	SOAP_CHECK_ERROR(result, soap, "GetPTZstatus");
+	
+	dump_tds__GetPTZStatus(&statusRep);
+
+
+	
+EXIT:
+		 
+
+    soap_destroy(soap); // clean up class instances
+    soap_end(soap); // clean up everything and close socket, // userid and passwd were deallocated
+    soap_done(soap); // close master socket and detach context
+    printf("\n");	
+		
+    return 0;
+	
+}
 
 void cb_discovery(char *DeviceXAddr)
 {
-	ONVIF_GetNodes(DeviceXAddr);
+	ONVIF_GetDeviceInformation(DeviceXAddr);
+
+	//int64 t1,t2 ;
+	
+	//while(1)
+	{
+		ONVIF_checktest(DeviceXAddr);
+
+	//	printf(" time end points   = %d \n" , getTickCount()/getTickFrequency());
+
+	}
+	return ;
 }
 
 
