@@ -432,18 +432,18 @@ int ONVIF_checktest_relativeMove(const char *DeviceXAddr)
 	struct soap *soap = NULL;
 	
 	//soap_init(soap);
-	SOAP_ASSERT(NULL != DeviceXAddr);
+	//SOAP_ASSERT(NULL != DeviceXAddr);
 	SOAP_ASSERT(NULL != (soap = ONVIF_soap_new(SOAP_SOCK_TIMEOUT)));
 
 	char * ip;
 	char Mediaddr[256]="";
 	static char profile[256]="";
-	float pan = 0.1;
-	float panSpeed = 1;
-	float tilt = 0.2;
-	float tiltSpeed = 0.5;
+	float pan = 0;
+	float panSpeed = 0;
+	float tilt = 0;
+	float tiltSpeed = 0;
 	float zoom = 0;
-	float zoomSpeed = 0.5;
+	float zoomSpeed = 0;
 	struct _tds__GetCapabilities            	req;
 	struct _tds__GetCapabilitiesResponse    	rep;
 	struct _trt__GetProfiles 			getProfiles;
@@ -588,18 +588,20 @@ EXIT:
 	
 }
 
+static float globalVector = 0.5;
 int ONVIF_checktest_continuesMove(const char *DeviceXAddr)
 {
 	struct soap *soap = NULL;
 	
 	//soap_init(soap);
-	SOAP_ASSERT(NULL != DeviceXAddr);
+	//SOAP_ASSERT(NULL != DeviceXAddr);
 	SOAP_ASSERT(NULL != (soap = ONVIF_soap_new(SOAP_SOCK_TIMEOUT)));
 
 	char * ip;
 	char Mediaddr[256]="";
 	static char profile[256]="";
-	float pan = 0.5;
+	static float pan = 0.5;
+	pan = globalVector;
 	float panSpeed = 1;
 	float tilt = 0.0;
 	float tiltSpeed = 0.5;
@@ -716,10 +718,13 @@ EXIT:
 
 int ONVIF_checktest_stopMove(const char *DeviceXAddr)
 {
+
+	usleep(50*1000);
+	
 	struct soap *soap = NULL;
 	
 	//soap_init(soap);
-	SOAP_ASSERT(NULL != DeviceXAddr);
+	//SOAP_ASSERT(NULL != DeviceXAddr);
 	SOAP_ASSERT(NULL != (soap = ONVIF_soap_new(SOAP_SOCK_TIMEOUT)));
 
 	char * ip;
@@ -817,16 +822,17 @@ if(move_step >= 1)
 	move_step = 0.99999;
 }
 
-	ptz_req.PanTilt = 0;
-	ptz_req.Zoom = 0;
+	*ptz_req.PanTilt = xsd__boolean__true_;
+	*ptz_req.Zoom = xsd__boolean__true_;
 	
 
 
 	soap_wsse_add_UsernameTokenDigest(soap, NULL, USERNAME, PASSWORD);
-	soap_call___tptz__Stop(soap, PTZendpoint, NULL, &ptz_req, &ptz_resp);
-
+	int result = soap_call___tptz__Stop(soap, PTZendpoint, NULL, &ptz_req, &ptz_resp);
+	printf("*************send stop PTZ !!! \n");
 	
-
+	SOAP_CHECK_ERROR(result, soap, "ptzStop");
+	
 EXIT:
 		 
 
@@ -842,29 +848,40 @@ EXIT:
 static bool thFlag = true;
 void th_function()  
 {  	
+
 	while(thFlag)
 	{
 		ONVIF_checktest_GetPtzStatus(NULL);
-
+		globalVector += 0.01;
+		usleep(30*1000);
+		ONVIF_checktest_continuesMove(NULL);
 		printf(" time end points   = %f  \n" , getTickCount()/getTickFrequency());
 
 	}
 
+		
 } 
 
 void cb_discovery(char *DeviceXAddr)
 {
 	ONVIF_GetDeviceInformation(DeviceXAddr);
 
+	ONVIF_checktest_stopMove(NULL);
+
 	 std::thread t(th_function); 
 	 
-	ONVIF_checktest_continuesMove(DeviceXAddr);
+	//ONVIF_checktest_continuesMove(DeviceXAddr);
 
-	sleep(5);
-	ONVIF_checktest_stopMove(DeviceXAddr);
+	sleep(2);
+	
 	thFlag = false;
+
+	
 	t.join();
 
+	//ONVIF_checktest_relativeMove(NULL);
+	
+	ONVIF_checktest_stopMove(NULL);
 
 	return ;
 }
