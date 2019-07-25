@@ -114,9 +114,10 @@
 									<listOptionValue builtIn="false" value="../src/onvif"/>
 									<listOptionValue builtIn="false" value="/usr/include/opencv"/>
 								</option>
-								<option id="nvcc.compiler.def.symbols.553740084" superClass="nvcc.compiler.def.symbols" valueType="definedSymbols">
+								<option id="nvcc.compiler.def.symbols.553740084" name="Defined symbols (-D)" superClass="nvcc.compiler.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="WITH_OPENSSL"/>
 								</option>
+								<option id="nvcc.compiler.cpp11option.1742648435" superClass="nvcc.compiler.cpp11option" value="true" valueType="boolean"/>
 								<inputType id="nvcc.compiler.input.cu.1865170203" superClass="nvcc.compiler.input.cu"/>
 								<inputType id="nvcc.compiler.input.cpp.1628306203" superClass="nvcc.compiler.input.cpp"/>
 								<inputType id="nvcc.compiler.input.c.2079453260" superClass="nvcc.compiler.input.c"/>
@@ -133,7 +134,7 @@
 									<listOptionValue builtIn="false" value="pthread"/>
 									<listOptionValue builtIn="false" value="opencv_core"/>
 								</option>
-								<option id="nvcc.linker.option.userobjs.2059762866" name="Other objects" superClass="nvcc.linker.option.userobjs" valueType="userObjs"/>
+								<option id="nvcc.linker.option.userobjs.2059762866" name="Other objects" superClass="nvcc.linker.option.userobjs"/>
 								<inputType id="nvcc.linker.input.1802567955" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

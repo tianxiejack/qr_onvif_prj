@@ -5,14 +5,11 @@
  *      Author: jet
  */
 
+#include <thread>
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <assert.h>
 
 #include "onvif_dump.h"
 #include "onvif_comm.h"
@@ -205,7 +202,7 @@ int ONVIF_checktest_GetPtzStatus(const char *DeviceXAddr)
 	struct soap *soap = NULL;
 	
 	//soap_init(soap);
-	SOAP_ASSERT(NULL != DeviceXAddr);
+	//SOAP_ASSERT(NULL != DeviceXAddr);
 	SOAP_ASSERT(NULL != (soap = ONVIF_soap_new(SOAP_SOCK_TIMEOUT)));
 
 	char * ip;
@@ -602,9 +599,9 @@ int ONVIF_checktest_continuesMove(const char *DeviceXAddr)
 	char * ip;
 	char Mediaddr[256]="";
 	static char profile[256]="";
-	float pan = 0.1;
+	float pan = 0.5;
 	float panSpeed = 1;
-	float tilt = 0.2;
+	float tilt = 0.0;
 	float tiltSpeed = 0.5;
 	float zoom = 0;
 	float zoomSpeed = 0.5;
@@ -842,28 +839,32 @@ EXIT:
 	
 }
 
+static bool thFlag = true;
+void th_function()  
+{  	
+	while(thFlag)
+	{
+		ONVIF_checktest_GetPtzStatus(NULL);
+
+		printf(" time end points   = %f  \n" , getTickCount()/getTickFrequency());
+
+	}
+
+} 
 
 void cb_discovery(char *DeviceXAddr)
 {
 	ONVIF_GetDeviceInformation(DeviceXAddr);
 
-
+	 std::thread t(th_function); 
+	 
 	ONVIF_checktest_continuesMove(DeviceXAddr);
 
 	sleep(5);
 	ONVIF_checktest_stopMove(DeviceXAddr);
-		
-#if 0
-	int64 t1,t2 ;
-	
-	while(1)
-	{
-		ONVIF_checktest_GetPtzStatus(DeviceXAddr);
+	thFlag = false;
+	t.join();
 
-		printf(" time end points   = %f  \n" , getTickCount()/getTickFrequency());
-
-	}
-#endif
 
 	return ;
 }
