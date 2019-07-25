@@ -31,6 +31,7 @@
 									<listOptionValue builtIn="false" value="../include"/>
 									<listOptionValue builtIn="false" value="../src/comm"/>
 									<listOptionValue builtIn="false" value="../src/onvif"/>
+									<listOptionValue builtIn="false" value="/usr/include/opencv"/>
 								</option>
 								<option id="nvcc.compiler.def.symbols.593915776" name="Defined symbols (-D)" superClass="nvcc.compiler.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="WITH_OPENSSL"/>
@@ -49,11 +50,14 @@
 									<listOptionValue builtIn="false" value="crypto"/>
 									<listOptionValue builtIn="false" value="z"/>
 									<listOptionValue builtIn="false" value="pthread"/>
+									<listOptionValue builtIn="false" value="opencv_core"/>
+									<listOptionValue builtIn="false" value="opencv_highgui"/>
+									<listOptionValue builtIn="false" value="opencv_video"/>
 								</option>
 								<option id="nvcc.linker.option.linkgl.1756124255" name="Link with OpenGL libraries" superClass="nvcc.linker.option.linkgl" value="false" valueType="boolean"/>
-								<option id="nvcc.linker.option.userobjs.1805239641" name="Other objects" superClass="nvcc.linker.option.userobjs" valueType="userObjs"/>
+								<option id="nvcc.linker.option.userobjs.1805239641" name="Other objects" superClass="nvcc.linker.option.userobjs"/>
 								<option id="nvcc.linker.option.shared.614453127" name="Shared (-shared)" superClass="nvcc.linker.option.shared" value="false" valueType="boolean"/>
-								<option id="nvcc.linker.option.other.1141627420" name="Other options (-Xlinker [option])" superClass="nvcc.linker.option.other" valueType="stringList"/>
+								<option id="nvcc.linker.option.other.1141627420" name="Other options (-Xlinker [option])" superClass="nvcc.linker.option.other"/>
 								<inputType id="nvcc.linker.input.1293653446" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -108,6 +112,10 @@
 									<listOptionValue builtIn="false" value="../include"/>
 									<listOptionValue builtIn="false" value="../src/comm"/>
 									<listOptionValue builtIn="false" value="../src/onvif"/>
+									<listOptionValue builtIn="false" value="/usr/include/opencv"/>
+								</option>
+								<option id="nvcc.compiler.def.symbols.553740084" superClass="nvcc.compiler.def.symbols" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="WITH_OPENSSL"/>
 								</option>
 								<inputType id="nvcc.compiler.input.cu.1865170203" superClass="nvcc.compiler.input.cu"/>
 								<inputType id="nvcc.compiler.input.cpp.1628306203" superClass="nvcc.compiler.input.cpp"/>
@@ -115,19 +123,17 @@
 							</tool>
 							<tool id="nvcc.linker.base.1731252406" name="NVCC Linker" superClass="nvcc.linker.base">
 								<option id="nvcc.linker.option.paths.106319182" name="Library search path (-L)" superClass="nvcc.linker.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="../lib"/>
+									<listOptionValue builtIn="false" value="/usr/local/lib"/>
 								</option>
 								<option id="nvcc.linker.option.cudart.306205988" name="CUDA Runtime Library:" superClass="nvcc.linker.option.cudart" value="nvcc.linker.option.cudart.static" valueType="enumerated"/>
 								<option id="nvcc.linker.option.libs.42619641" name="Libraries (-l)" superClass="nvcc.linker.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" value="gsoap"/>
-									<listOptionValue builtIn="false" value="gsoapck"/>
-									<listOptionValue builtIn="false" value="gsoapssl"/>
+									<listOptionValue builtIn="false" value="ssl"/>
+									<listOptionValue builtIn="false" value="crypto"/>
+									<listOptionValue builtIn="false" value="z"/>
+									<listOptionValue builtIn="false" value="pthread"/>
+									<listOptionValue builtIn="false" value="opencv_core"/>
 								</option>
-								<option id="nvcc.linker.option.userobjs.2059762866" name="Other objects" superClass="nvcc.linker.option.userobjs" valueType="userObjs">
-									<listOptionValue builtIn="false" value="../lib/libgsoap.a"/>
-									<listOptionValue builtIn="false" value="../lib/libgsoapck.a"/>
-									<listOptionValue builtIn="false" value="../lib/libgsoapssl.a"/>
-								</option>
+								<option id="nvcc.linker.option.userobjs.2059762866" name="Other objects" superClass="nvcc.linker.option.userobjs" valueType="userObjs"/>
 								<inputType id="nvcc.linker.input.1802567955" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

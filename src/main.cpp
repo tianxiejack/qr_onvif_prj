@@ -5,6 +5,10 @@
  *      Author: jet
  */
 
+#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,14 +20,10 @@
 #include "wsseapi.h"
 #include "stdsoap2.h"
 
-#if 0
-#include <opencv2/opencv.hpp>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
 
 using namespace std;
 using namespace cv;
-#endif
+
 
 /************************************************************************
 **函数：ONVIF_GetDeviceInformation
@@ -196,7 +196,7 @@ int ONVIF_checktest(const char *DeviceXAddr)
 
 	char * ip;
 	char Mediaddr[256]="";
-	char profile[256]="";
+	static char profile[256]="";
 	float pan = 1;
 	float panSpeed = 1;
 	float tilt = 1;
@@ -223,8 +223,11 @@ int ONVIF_checktest(const char *DeviceXAddr)
 
     ip = "192.168.0.64"; 
     
-    sprintf(endpoint, "http://%s/onvif/device_service", ip);    
-
+    sprintf(endpoint, "http://%s/onvif/device_service", ip);  
+static int flag = 0;
+#if 1
+if(flag == 0)
+{
     soap_call___tds__GetCapabilities(soap, endpoint, NULL, &req, &rep);
     if (soap->error)  
     {  
@@ -243,8 +246,6 @@ int ONVIF_checktest(const char *DeviceXAddr)
     printf("\n");
 	
     soap_wsse_add_UsernameTokenDigest(soap, NULL, USERNAME, PASSWORD);
-	
-
     if(soap_call___trt__GetProfiles(soap,Mediaddr,NULL,&getProfiles,&response)==SOAP_OK)
     {
         strcpy(profile, response.Profiles[0].token);
@@ -258,8 +259,10 @@ int ONVIF_checktest(const char *DeviceXAddr)
 	                                        soap->error, *soap_faultcode(soap), 
 	                                        *soap_faultstring(soap));  
     }
-    printf("\n");	
-
+    printf("\n");
+	flag = 1;
+}
+#endif
 
 	char PTZendpoint[255];
 	memset(PTZendpoint, '\0', 255);
@@ -294,13 +297,13 @@ void cb_discovery(char *DeviceXAddr)
 {
 	ONVIF_GetDeviceInformation(DeviceXAddr);
 
-	//int64 t1,t2 ;
+	int64 t1,t2 ;
 	
-	//while(1)
+	while(1)
 	{
 		ONVIF_checktest(DeviceXAddr);
 
-	//	printf(" time end points   = %d \n" , getTickCount()/getTickFrequency());
+		printf(" time end points   = %f  \n" , getTickCount()/getTickFrequency());
 
 	}
 	return ;
