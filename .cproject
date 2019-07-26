@@ -28,6 +28,7 @@
 								<option defaultValue="nvcc.compiler.optimization.level.none" id="nvcc.compiler.optimization.level.98147248" name="Optimization Level" superClass="nvcc.compiler.optimization.level" valueType="enumerated"/>
 								<option id="nvcc.compiler.pic.1607660019" name="Position Independent Code (-fPIC)" superClass="nvcc.compiler.pic"/>
 								<option id="nvcc.compiler.include.paths.437392804" name="Include paths (-I)" superClass="nvcc.compiler.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="../include/ffmpeg"/>
 									<listOptionValue builtIn="false" value="../include"/>
 									<listOptionValue builtIn="false" value="../src/comm"/>
 									<listOptionValue builtIn="false" value="../src/onvif"/>
@@ -43,6 +44,7 @@
 							<tool id="nvcc.linker.base.419158985" name="NVCC Linker" superClass="nvcc.linker.base">
 								<option id="nvcc.linker.option.paths.1424141220" name="Library search path (-L)" superClass="nvcc.linker.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="/usr/local/lib"/>
+									<listOptionValue builtIn="false" value="/home/jet/ffmpeg-linux-pc/lib"/>
 								</option>
 								<option id="nvcc.linker.option.cudart.778100973" name="CUDA Runtime Library:" superClass="nvcc.linker.option.cudart" value="nvcc.linker.option.cudart.static" valueType="enumerated"/>
 								<option id="nvcc.linker.option.libs.723357766" name="Libraries (-l)" superClass="nvcc.linker.option.libs" valueType="libs">
@@ -51,8 +53,13 @@
 									<listOptionValue builtIn="false" value="z"/>
 									<listOptionValue builtIn="false" value="pthread"/>
 									<listOptionValue builtIn="false" value="opencv_core"/>
-									<listOptionValue builtIn="false" value="opencv_highgui"/>
-									<listOptionValue builtIn="false" value="opencv_video"/>
+									<listOptionValue builtIn="false" value="avcodec"/>
+									<listOptionValue builtIn="false" value="avdevice"/>
+									<listOptionValue builtIn="false" value="avfilter"/>
+									<listOptionValue builtIn="false" value="avformat"/>
+									<listOptionValue builtIn="false" value="avutil"/>
+									<listOptionValue builtIn="false" value="swresample"/>
+									<listOptionValue builtIn="false" value="swscale"/>
 								</option>
 								<option id="nvcc.linker.option.linkgl.1756124255" name="Link with OpenGL libraries" superClass="nvcc.linker.option.linkgl" value="false" valueType="boolean"/>
 								<option id="nvcc.linker.option.userobjs.1805239641" name="Other objects" superClass="nvcc.linker.option.userobjs"/>
@@ -109,6 +116,7 @@
 								<option defaultValue="nvcc.compiler.optimization.level.most" id="nvcc.compiler.optimization.level.713002909" name="Optimization Level" superClass="nvcc.compiler.optimization.level" valueType="enumerated"/>
 								<option id="nvcc.compiler.pic.1325621330" name="Position Independent Code (-fPIC)" superClass="nvcc.compiler.pic"/>
 								<option id="nvcc.compiler.include.paths.1364956151" name="Include paths (-I)" superClass="nvcc.compiler.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="../include/ffmpeg"/>
 									<listOptionValue builtIn="false" value="../include"/>
 									<listOptionValue builtIn="false" value="../src/comm"/>
 									<listOptionValue builtIn="false" value="../src/onvif"/>
@@ -117,7 +125,7 @@
 								<option id="nvcc.compiler.def.symbols.553740084" name="Defined symbols (-D)" superClass="nvcc.compiler.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="WITH_OPENSSL"/>
 								</option>
-								<option id="nvcc.compiler.cpp11option.1742648435" superClass="nvcc.compiler.cpp11option" value="true" valueType="boolean"/>
+								<option id="nvcc.compiler.cpp11option.1742648435" name="Enable C++11 support (-std=c++11)" superClass="nvcc.compiler.cpp11option" value="true" valueType="boolean"/>
 								<inputType id="nvcc.compiler.input.cu.1865170203" superClass="nvcc.compiler.input.cu"/>
 								<inputType id="nvcc.compiler.input.cpp.1628306203" superClass="nvcc.compiler.input.cpp"/>
 								<inputType id="nvcc.compiler.input.c.2079453260" superClass="nvcc.compiler.input.c"/>
@@ -125,6 +133,7 @@
 							<tool id="nvcc.linker.base.1731252406" name="NVCC Linker" superClass="nvcc.linker.base">
 								<option id="nvcc.linker.option.paths.106319182" name="Library search path (-L)" superClass="nvcc.linker.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="/usr/local/lib"/>
+									<listOptionValue builtIn="false" value="/home/jet/ffmpeg-linux-pc/lib"/>
 								</option>
 								<option id="nvcc.linker.option.cudart.306205988" name="CUDA Runtime Library:" superClass="nvcc.linker.option.cudart" value="nvcc.linker.option.cudart.static" valueType="enumerated"/>
 								<option id="nvcc.linker.option.libs.42619641" name="Libraries (-l)" superClass="nvcc.linker.option.libs" valueType="libs">
@@ -133,6 +142,13 @@
 									<listOptionValue builtIn="false" value="z"/>
 									<listOptionValue builtIn="false" value="pthread"/>
 									<listOptionValue builtIn="false" value="opencv_core"/>
+									<listOptionValue builtIn="false" value="avcodec"/>
+									<listOptionValue builtIn="false" value="avdevice"/>
+									<listOptionValue builtIn="false" value="avfilter"/>
+									<listOptionValue builtIn="false" value="avformat"/>
+									<listOptionValue builtIn="false" value="avutil"/>
+									<listOptionValue builtIn="false" value="swresample"/>
+									<listOptionValue builtIn="false" value="swscale"/>
 								</option>
 								<option id="nvcc.linker.option.userobjs.2059762866" name="Other objects" superClass="nvcc.linker.option.userobjs"/>
 								<inputType id="nvcc.linker.input.1802567955" superClass="nvcc.linker.input">
