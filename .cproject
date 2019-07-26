@@ -33,6 +33,7 @@
 									<listOptionValue builtIn="false" value="../src/comm"/>
 									<listOptionValue builtIn="false" value="../src/onvif"/>
 									<listOptionValue builtIn="false" value="/usr/include/opencv"/>
+									<listOptionValue builtIn="false" value="/usr/include/opencv2"/>
 								</option>
 								<option id="nvcc.compiler.def.symbols.593915776" name="Defined symbols (-D)" superClass="nvcc.compiler.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="WITH_OPENSSL"/>
@@ -53,6 +54,8 @@
 									<listOptionValue builtIn="false" value="z"/>
 									<listOptionValue builtIn="false" value="pthread"/>
 									<listOptionValue builtIn="false" value="opencv_core"/>
+									<listOptionValue builtIn="false" value="opencv_highgui"/>
+									<listOptionValue builtIn="false" value="opencv_imgproc"/>
 									<listOptionValue builtIn="false" value="avcodec"/>
 									<listOptionValue builtIn="false" value="avdevice"/>
 									<listOptionValue builtIn="false" value="avfilter"/>
@@ -121,6 +124,7 @@
 									<listOptionValue builtIn="false" value="../src/comm"/>
 									<listOptionValue builtIn="false" value="../src/onvif"/>
 									<listOptionValue builtIn="false" value="/usr/include/opencv"/>
+									<listOptionValue builtIn="false" value="/usr/include/opencv2"/>
 								</option>
 								<option id="nvcc.compiler.def.symbols.553740084" name="Defined symbols (-D)" superClass="nvcc.compiler.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="WITH_OPENSSL"/>
@@ -142,6 +146,8 @@
 									<listOptionValue builtIn="false" value="z"/>
 									<listOptionValue builtIn="false" value="pthread"/>
 									<listOptionValue builtIn="false" value="opencv_core"/>
+									<listOptionValue builtIn="false" value="opencv_highgui"/>
+									<listOptionValue builtIn="false" value="opencv_imgproc"/>
 									<listOptionValue builtIn="false" value="avcodec"/>
 									<listOptionValue builtIn="false" value="avdevice"/>
 									<listOptionValue builtIn="false" value="avfilter"/>

@@ -70,6 +70,19 @@ void open_rtsp(char *rtsp)
     AVStream        *st = NULL;
     char            errbuf[64];
 
+    bool nRestart = false;
+	int videoindex = -1;
+	int audioindex = -1;
+	AVStream *pVst;
+	uint8_t* buffer_rgb = NULL;
+	AVCodecContext *pVideoCodecCtx = NULL;
+	AVFrame         *pFrame = av_frame_alloc();
+	AVFrame         *pFrameRGB = av_frame_alloc();
+	int got_picture;
+	SwsContext      *img_convert_ctx = NULL;
+	AVCodec *pVideoCodec = NULL;
+
+
     av_register_all();                                                          // Register all codecs and formats so that they can be used.
     avformat_network_init();                                                    // Initialization of network components
 
@@ -104,11 +117,97 @@ void open_rtsp(char *rtsp)
     pkt.data = NULL;
     pkt.size = 0;
 
-    while (1)
+
+
+	while (1)
     {
         do {
             ret = av_read_frame(ifmt_ctx, &pkt);                                // read frames
-        } while (ret == AVERROR(EAGAIN));
+
+
+
+#if 1
+			cout << pkt.size << endl;
+			//decode stream
+			if (!nRestart)
+			{
+				for (int i = 0; i < ifmt_ctx->nb_streams; i++)
+				{
+					if ((ifmt_ctx->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO) && (videoindex < 0))
+					{
+						videoindex = i;
+					}
+					if ((ifmt_ctx->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO) && (audioindex < 0))
+					{
+						audioindex = i;
+					}
+				}
+				pVst = ifmt_ctx->streams[videoindex];
+				pVideoCodecCtx = pVst->codec;
+				pVideoCodec = avcodec_find_decoder(pVideoCodecCtx->codec_id);
+				if (pVideoCodec == NULL)
+					return;
+				//pVideoCodecCtx = avcodec_alloc_context3(pVideoCodec);
+ 
+				if (avcodec_open2(pVideoCodecCtx, pVideoCodec, NULL) < 0)
+					return;
+			}
+ 
+			if (pkt.stream_index == videoindex)
+			{
+				fprintf(stdout, "pkt.size=%d,pkt.pts=%lld, pkt.data=0x%x.", pkt.size, pkt.pts, (unsigned int)*pkt.data);
+				int av_result = avcodec_decode_video2(pVideoCodecCtx, pFrame, &got_picture, &pkt);
+ 
+				if (got_picture)
+				{
+					fprintf(stdout, "decode one video frame!\n");
+				}
+ 
+				if (av_result < 0)
+				{
+					fprintf(stderr, "decode failed: inputbuf = 0x%x , input_framesize = %d\n", pkt.data, pkt.size);
+					return;
+				}
+#if 1
+				if (got_picture)
+				{
+					int bytes = avpicture_get_size(AV_PIX_FMT_RGB24, pVideoCodecCtx->width, pVideoCodecCtx->height);
+					buffer_rgb = (uint8_t *)av_malloc(bytes);
+					avpicture_fill((AVPicture *)pFrameRGB, buffer_rgb, AV_PIX_FMT_RGB24, pVideoCodecCtx->width, pVideoCodecCtx->height);
+ 
+					img_convert_ctx = sws_getContext(pVideoCodecCtx->width, pVideoCodecCtx->height, pVideoCodecCtx->pix_fmt,
+						pVideoCodecCtx->width, pVideoCodecCtx->height, AV_PIX_FMT_BGR24, SWS_FAST_BILINEAR, NULL, NULL, NULL);
+					if (img_convert_ctx == NULL)
+					{
+ 
+						printf("can't init convert context!\n");
+						return;
+					}
+					sws_scale(img_convert_ctx, pFrame->data, pFrame->linesize, 0, pVideoCodecCtx->height, pFrameRGB->data, pFrameRGB->linesize);
+
+					cv::Mat pRgbImg = cv::Mat(pVideoCodecCtx->height,pVideoCodecCtx->width,CV_8UC3);
+					//IplImage *pRgbImg = cvCreateImage(cvSize(pVideoCodecCtx->width, pVideoCodecCtx->height), 8, 3);
+
+					memcpy(pRgbImg.data, buffer_rgb, pVideoCodecCtx->width * 3 * pVideoCodecCtx->height);
+ 
+					cv::imshow("GB28181Show", pRgbImg);
+ 
+					//DetectFace(Img);
+					cv::waitKey(1);
+
+					sws_freeContext(img_convert_ctx);
+					av_free(buffer_rgb);
+				}
+#endif
+			}
+ 
+#endif
+
+
+
+
+	} while (ret == AVERROR(EAGAIN));
+
 
         if (ret < 0) {
             printf("Could not read frame (error '%s')\n", av_make_error_string(errbuf, sizeof(errbuf), ret));
@@ -203,17 +302,17 @@ EXIT:
 
 void callbackAboutGetStream(char *DeviceXAddr)
 {
-	int stmno = 0;                                                              // 码流序号，0为主码流，1为辅码流
-	    int profile_cnt = 0;                                                        // 设备配置文件个数
-	    struct tagProfile *profiles = NULL;                                         // 设备配置文件列表
-	    struct tagCapabilities capa;                                                // 设备能力信息
+		int stmno = 0;                                                              // 码流序号，0为主码流，1为辅码流
+		int profile_cnt = 0;                                                       // 设备配置文件个数
+		struct tagProfile *profiles = NULL;                             // 设备配置文件列表
+		struct tagCapabilities capa;                                         // 设备能力信息
 
-	    char uri[ONVIF_ADDRESS_SIZE] = {0};                                         // 不带认证信息的URI地址
-	    char uri_auth[ONVIF_ADDRESS_SIZE + 50] = {0};                               // 带有认证信息的URI地址
+		char uri[ONVIF_ADDRESS_SIZE] = {0};                          // 不带认证信息的URI地址
+		char uri_auth[ONVIF_ADDRESS_SIZE + 50] = {0};          // 带有认证信息的URI地址
 
-	    ONVIF_GetCapabilities(DeviceXAddr, &capa);                                  // 获取设备能力信息（获取媒体服务地址）
+		ONVIF_GetCapabilities(DeviceXAddr, &capa);               // 获取设备能力信息（获取媒体服务地址）
 
-	    profile_cnt = ONVIF_GetProfiles(capa.MediaXAddr, &profiles);                // 获取媒体配置信息（主/辅码流配置信息）
+		profile_cnt = ONVIF_GetProfiles(capa.MediaXAddr, &profiles);      // 获取媒体配置信息（主/辅码流配置信息）
 
 	    if (profile_cnt > stmno) {
 	        ONVIF_GetStreamUri(capa.MediaXAddr, profiles[stmno].token, uri, sizeof(uri)); // 获取RTSP地址
@@ -230,27 +329,6 @@ void callbackAboutGetStream(char *DeviceXAddr)
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
