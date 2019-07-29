@@ -19,10 +19,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-using namespace std;
-using namespace cv;
 
-#if 0
+
+
 
 #include "onvif_dump.h"
 #include "onvif_comm.h"
@@ -32,8 +31,8 @@ using namespace cv;
 
 
 	   
-
-
+using namespace std;
+using namespace cv;
 
 typedef enum{
 	PTZ_LEFT,
@@ -1219,10 +1218,6 @@ void cb_discovery(char *DeviceXAddr)
 	return ;
 }
 
-
-
-
-#endif
 
 void processFrame(const cv::Mat frame)
 {
