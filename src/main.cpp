@@ -5,11 +5,24 @@
  *      Author: jet
  */
 
+
 #include <thread>
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
+#include "opencv2/imgproc/imgproc.hpp"
+
+#include "RtspCapture.hpp"
+
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+using namespace std;
+using namespace cv;
+
+#if 0
 
 #include "onvif_dump.h"
 #include "onvif_comm.h"
@@ -18,8 +31,8 @@
 #include "stdsoap2.h"
 
 
-using namespace std;
-using namespace cv;
+	   
+
 
 
 typedef enum{
@@ -300,6 +313,7 @@ EXIT:
 }
 
 
+
 void callbackAboutGetStream(char *DeviceXAddr)
 {
 		int stmno = 0;                                                              // 码流序号，0为主码流，1为辅码流
@@ -319,7 +333,21 @@ void callbackAboutGetStream(char *DeviceXAddr)
 
 	        make_uri_withauth(uri, USERNAME, PASSWORD, uri_auth, sizeof(uri_auth)); // 生成带认证信息的URI（有的IPC要求认证）
 
-	        open_rtsp(uri_auth);                                                    // 读取主码流的音视频数据
+		VideoCapture cap("rtsp://admin:admin$2018@192.168.0.64:554/h264/ch0/main/av_stream");// uri_auth
+		Mat frame;
+		
+		for(;;)
+		{
+			cap >> frame;
+			if(frame.empty())
+				break;
+
+			printf("h,w = %d , %d \n" , frame.cols , frame.rows );
+			cv::imshow("111",frame);
+			cv::waitKey(1);
+		}
+		 
+		//open_rtsp(uri_auth);                                                    // 读取主码流的音视频数据
 	    }
 
 	    if (NULL != profiles) {
@@ -1194,11 +1222,36 @@ void cb_discovery(char *DeviceXAddr)
 
 
 
+#endif
+
+void processFrame(const cv::Mat frame)
+{
+	printf("w,h = %d ,%d \n", frame.cols,frame.rows);
+	cv::imshow("test", frame);
+	cv::waitKey(1);
+	
+	return;
+}
+
+
 int main(int argc, char **argv)
 {
 	//ONVIF_DetectDevice(NULL);
 
-	ONVIF_DetectDevice(cb_discovery);
+	//ONVIF_DetectDevice(cb_discovery);
 
-    return 0;
+	struct timeval tv;
+		
+	RtspCapture rtp;
+
+	rtp.init("rtsp://admin:admin$2018@192.168.0.64:554/h264/ch0/main/av_stream",1920,1080,processFrame);
+
+	
+	tv.tv_sec = 10000;
+	tv.tv_usec = 0;
+	select(0, NULL, NULL, NULL, &tv);
+
+
+
+	return 0;
 }
